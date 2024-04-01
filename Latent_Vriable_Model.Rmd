@@ -95,8 +95,14 @@ ggpairs(as.data.frame(Pokemon_x_scaled))
 Apply latent variable method described in this work book. Do you find anything that you did not find before?
 
 ```{r}
-#
-#
+library(lavaan)
+library(semPlot)
+latent_formula1 <- 'CombatPower =~ HP + Attack + Defense + Sp..Atk + Sp..Def + Speed'
+
+latent_model1 <- sem(latent_formula1, data=Pokemon_x_scaled)
+
+summary(latent_model1, standardize = T, rsq = T)
+semPaths(latent_model1, whatLabels="est", layout="tree", rotation=2)
 ```
 
 Comment of the result:
@@ -105,6 +111,7 @@ Comment of the result:
 Please write your answer in full sentences.
 
 
+The Confirmatory Factor Analysis (CFA) revealed a single latent variable, Combat Power (CmP), which effectively captures the underlying structure of the combat-related stats in the Pokémon dataset. The factor loadings indicate that Special Attack (Sp. Atk) and Special Defense (Sp. Def) are the most influenced by CmP, as evidenced by their higher loadings and R-square values. Regular Defense also shows a strong relationship with CmP, suggesting that these defense-related attributes are key components of a Pokémon's overall combat efficacy. The lower R-square values for HP and Speed indicate that these stats have additional influences beyond CmP, warranting further investigation. 
 ~~~
 
 
@@ -116,8 +123,16 @@ Pokemon_evo<-fread("Pokemon_evo.csv")
 
 
 ```{r}
-#
-#
+Pokemon_evo$Stage_1 <- factor(Pokemon_evo$Stage_1, ordered = TRUE)
+Pokemon_evo$Stage_2 <- factor(Pokemon_evo$Stage_2, ordered = TRUE)
+Pokemon_evo$Stage_3 <- factor(Pokemon_evo$Stage_3, ordered = TRUE)
+
+evolution_model <- 'evolution =~ Stage_1 + Stage_2 + Stage_3'
+
+model<- sem(evolution_model, data = Pokemon_evo, ordered = names(Pokemon_evo))
+
+summary(model)
+
 ```
 
 Comment of the result:
@@ -126,6 +141,7 @@ Comment of the result:
 Please write your answer in full sentences.
 
 
+The statistical results from the latent variable analysis suggest that there are significant differences in the stages of Pokémon evolution and their relationship to the 'evolution'. Specifically, Stage 2 Pokémon exhibit a very high loading (29.207) with a large standard error, indicating potential issues with estimation or model specification. However, Stage 3 has a substantial and statistically significant loading (5.383, p < 0.01), showing a strong relationship with the evolution latent variable. The variance for evolution is very low (0.003), suggesting that the latent variable has little variability not explained by the model. In summary, while Stage 3 Pokémon seem to have a strong association with the evolution construct, the model perform poorly, especially considering the unexpected negative variance estimate for Stage 2, to improve its interpretative value.
 ~~~
 
 ## Additional Material
